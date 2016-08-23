@@ -1,11 +1,13 @@
+#!/usr/bin/env python
+
 '''
 CIDR Ping - an alternative to bping / fping
     by Ryan Keller, UW-IT NIM
 ---
 
 ##### Requires:
- - Python 2.7
- - Netaddr (pip install netaddr)
+ - Python 2.X
+ - Netaddr (any version)
 
 This project was designed to serve as a method of scanning and reporting information on a subnet - it provides information about a subnet, it's available information e.g. the Mask, Broadcast, and range of available IP's, and most importantly - it can ping every single address (up to 255!) in less than a second.
 
@@ -45,7 +47,6 @@ Used to calculate IP's in a CIDR. Keep in mind that an IP address
 is treated as an object, that's why I cast them as strings so much.
 '''
 
-from time import sleep    
 
 
 ################################################################################
@@ -55,8 +56,12 @@ from time import sleep
 ### Ping Configuration
 TIMEOUT = '500'     #Miliseconds
     #I find 500, or half a second, to be the best
+UNIX_TIMEOUT = '1'
+    #Some UNIX systems appear to throw exceptions upon receiving floats
+    
 PACKET_NUMBER = '2' #Attempts to reach a device
 PACKET_SIZE = '2'   #Size of packets, Windows default is 32
+
 
 
 ################################################################################
@@ -66,7 +71,7 @@ PACKET_SIZE = '2'   #Size of packets, Windows default is 32
 def main():
 
     try:
-        #Gather the CIDR or IP
+        #Gather the CIDR or IP. A good CIDR to test is 172.31.219.94/24
         if len(sys.argv) > 1:
             CIDR = sys.argv[1]
         else:
@@ -124,7 +129,7 @@ def main():
         except:
             pass
         print('='*40)
-        print('Utility developed by Keller, UW-IT NIM')
+        print('Utility developed by Ryan Keller (RcKeller.Github.IO)')
 
         
     except Exception as reason:
@@ -217,10 +222,10 @@ class Pinger(threading.Thread):
             otherwise, requiring us to prefix the command with a timout that is SEPARATE
             from the actual ping command.
             '''
-            self.command =  ['timeout', ('0.'+str(TIMEOUT)),
-                            'ping', self.ip,
+            self.command =  ['timeout', UNIX_TIMEOUT,
+                            'ping', '-b',
+                            self.ip,
                             '-c', PACKET_NUMBER,
-                            '-w', TIMEOUT,
                             '-l', PACKET_SIZE]
                             
     def run(self):
@@ -239,4 +244,3 @@ class Pinger(threading.Thread):
 
 if __name__ == '__main__':
     main()
-

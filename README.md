@@ -3,11 +3,10 @@
 
 ##### Requires:
  - Python 2.7
- - Netaddr (pip install netaddr)
+ - Netaddr (any version)
 
 This project was designed to serve as a method of scanning and reporting information on a subnet - it provides information about a subnet, it's available information e.g. the Mask, Broadcast, and range of available IP's, and most importantly - it can ping every single address (up to 255!) in less than a second.
-
-I do not have access to the source file of bping, but I was informed that it works off of PUMA data, which explains why I've seen unreported devices in a bping query. This makes sense to some extent - we don't want to flood the screen with the results of 255 pings. Instead, what I did in this program, is I added a function that groups together pings by "online" and "offline", and then groups ranges of IP's together, followed by creating a table, minimizing screen flood. Example output:
+This was created due to the poor data formatting and speed of nMap and fping - they do the same logical work, but a /24 network can easily flood your screen several times over.
 
     ========================================
     CIDR:   172.31.219.80/28        Range: 80-95
@@ -22,8 +21,3 @@ I do not have access to the source file of bping, but I was informed that it wor
     OFFLINE:
     80     |82-83  |85-90  |92     |95     |
     ========================================
-
-##### Technical notes:
- - This is not meant to replace bping/fping. In fact, we should keep the two so we can cross-reference queries and then discover potential PUMA record conflicts.
- - This was not developed by the tools group, but I am working on refactoring the code so that this could potentially be run on port.washington.edu
- - The pinger class needs to be refactored for better encapsulation, but time has imposed a restraint on that for now.
